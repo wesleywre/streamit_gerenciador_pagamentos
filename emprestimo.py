@@ -196,7 +196,7 @@ if authentication_status is True:
             "Valor do Empréstimo", min_value=0.0, value=10000.0, step=100.0
         )
         taxa_juros = st.number_input(
-            "Taxa de Juros Anual (%)", min_value=0.0, value=5.0, step=0.1
+            "Taxa de Juros Mensal (%)", min_value=0.0, value=5.0, step=0.1
         )
         quantidade_meses = st.number_input(
             "Quantidade de Meses", min_value=1, value=12, step=1
@@ -206,17 +206,6 @@ if authentication_status is True:
                 valor_emprestimo, taxa_juros, quantidade_meses
             )
             st.experimental_rerun()
-
-    if configuracao:
-        st.subheader("Configuração Atual")
-        st.write(
-            f"Valor do Empréstimo: R$ {formatar_valores(valor_emprestimo)}"
-        )
-        st.write(f"Taxa de Juros Anual: {taxa_juros}%")
-        st.write(f"Quantidade de Meses: {quantidade_meses}")
-
-        if st.button("Editar Configuração"):
-            st.session_state.show_config_modal = True
 
     # Sidebar para registrar pagamentos
     st.sidebar.header("Registrar Pagamento")
@@ -251,29 +240,38 @@ if authentication_status is True:
         pagamentos_df, valor_emprestimo, taxa_juros, quantidade_meses
     )
 
-    # Exibir valores pagos, saldo devedor, quantidade de meses e taxa de juros em cards no topo da tela
-    st.markdown(
-        "<h3 style='text-align: center;'>Situação Atual</h3>",
-        unsafe_allow_html=True,
-    )
-    col1, col2, col3 = st.columns(3)
+    if configuracao:
+        (
+            col1,
+            col2,
+        ) = st.columns(2)
+        with col1:
+            st.subheader("Configuração Atual")
+            st.write(
+                f"Valor do Empréstimo: R$ {formatar_valores(valor_emprestimo)}"
+            )
+            st.write(f"Taxa de Juros Mensal: {taxa_juros}%")
+            st.write(f"Quantidade de Meses: {quantidade_meses}")
 
-    with col1:
-        st.metric(
-            label="Valor Pago", value=f"R$ {formatar_valores(valor_pago)}"
-        )
+            _, valor_total = calcular_emprestimo(
+                valor_emprestimo, taxa_juros, quantidade_meses
+            )
+            st.write(
+                f"Valor Total a ser Pago: R$ {formatar_valores(valor_total)}"
+            )
 
-    with col2:
-        st.metric(
-            label="Saldo Devedor",
-            value=f"R$ {formatar_valores(saldo_restante)}",
-        )
+            if st.button("Editar Configuração"):
+                st.session_state.show_config_modal = True
 
-    with col3:
-        st.metric(
-            label="Valor da Parcela",
-            value=f"R$ {formatar_valores(valor_parcela)}",
-        )
+        with col2:
+            # Exibir valores pagos, saldo devedor, quantidade de meses e taxa de juros em cards no topo da tela
+            st.subheader("Status Empréstimo")
+            parcelas_pagas = int(valor_pago // valor_parcela)
+
+            st.write(f"Valor Pago: R$ {formatar_valores(valor_pago)}")
+            st.write(f"Saldo Devedor: R$ {formatar_valores(saldo_restante)}")
+            st.write(f"Valor da Parcela: R$ {formatar_valores(valor_parcela)}")
+            st.write(f"Parcelas Pagas: {parcelas_pagas}/{quantidade_meses}")
 
     # Exibir a tabela de pagamentos
     st.markdown(
@@ -345,7 +343,7 @@ if authentication_status is True:
                 step=100.0,
             )
             new_taxa_juros = st.number_input(
-                "Nova Taxa de Juros Anual (%)",
+                "Nova Taxa de Juros Mensal (%)",
                 min_value=0.0,
                 value=taxa_juros,
                 step=0.1,
