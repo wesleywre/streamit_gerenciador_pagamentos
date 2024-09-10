@@ -1,0 +1,16 @@
+credentials:
+  usernames:
+    admin:
+      name: "Admin"
+      password: "$2a$12$jTkU/Ey/RFB/OhtLnzJMaegwZwqWuTpGSxznkmTdPK42lEjJgXyL6"  # Hash da senha bcrypt
+    ricardo:
+      name: "Ricardo"
+      password: "$2a$12$JRdOjY3Lr0Bu4InPyymY0eN3sth5cETaTSAU0sreDefud3icnbWr2"  # Hash da senha bcrypt
+
+cookie:
+  name: "emprestimos_app"
+  key: "random_key"
+  expiry_days: 30
+
+preauthorized:
+  emails: []
