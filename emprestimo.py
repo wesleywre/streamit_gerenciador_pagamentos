@@ -141,6 +141,9 @@ if authentication_status is True:
     # Criar as tabelas no banco de dados
     criar_tabelas()
 
+    def recarregar_pagina():
+        st.rerun()
+
     # Função para calcular o saldo devedor e valor pago
     def calcular_emprestimo(valor, taxa, meses):
         taxa_mensal = taxa / 100  # Taxa de 2% ao mês
@@ -205,7 +208,7 @@ if authentication_status is True:
             inserir_configuracao(
                 valor_emprestimo, taxa_juros, quantidade_meses
             )
-            st.experimental_rerun()
+            recarregar_pagina()
 
     # Sidebar para registrar pagamentos
     st.sidebar.header("Registrar Pagamento")
@@ -292,7 +295,7 @@ if authentication_status is True:
         with col4:
             if st.button("Excluir", key=f"delete_{row['ID']}"):
                 excluir_pagamento(row["ID"])
-                st.experimental_rerun()
+                recarregar_pagina()
 
     # Modal para editar o pagamento
     if "show_modal" in st.session_state and st.session_state.show_modal:
@@ -321,7 +324,7 @@ if authentication_status is True:
                         st.session_state.edit_index, new_data_str, new_valor
                     )
                     st.session_state.show_modal = False
-                    st.experimental_rerun()
+                    recarregar_pagina()
                 except ValueError:
                     st.error(
                         "Por favor, insira uma data válida no formato dd/mm/yyyy"
@@ -365,7 +368,7 @@ if authentication_status is True:
                         new_quantidade_meses,
                     )
                     st.session_state.show_config_modal = False
-                    st.experimental_rerun()
+                    recarregar_pagina()
                 except Exception as e:
                     st.error(f"Erro ao editar configuração: {e}")
 
